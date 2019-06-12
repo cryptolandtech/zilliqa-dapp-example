@@ -8,8 +8,8 @@
         "start:production": "npm run -s serve",
         "start:development": "npm run -s dev",
         "build": "preact build",
-        "serve": "preact build && preact serve",
-        "dev": "preact watch",
+        "serve": "preact build && preact serve --https",
+        "dev": "preact watch --https",
         "lint": "eslint src",
         "test": "jest"
     },

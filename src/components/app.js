@@ -5,7 +5,6 @@ import Header from './header';
 
 // Code-splitting is automated for routes
 import Home from '../routes/home';
-import Profile from '../routes/profile';
 
 export default class App extends Component {
 	
