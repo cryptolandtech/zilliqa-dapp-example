@@ -46,6 +46,7 @@ export default class Home extends Component {
 
 	async onConnectClick() {
 		this.state.moonlet.providers.zilliqa.getAccounts().then(accounts => {
+			console.log(accounts);
 			this.setState({accountConnected: true});
 		});
 	}
@@ -106,9 +107,13 @@ export default class Home extends Component {
 					<br/><br/>
 
 					{/* Display current selected account info */}
-					<div>Connected Account (bech32): {this.state.moonlet.providers.zilliqa.currentAccount}</div>
-					<div>Connected Account (old): {fromBech32Address(this.state.moonlet.providers.zilliqa.currentAccount)}</div>
-					<div>Connected Chain ID: {this.state.moonlet.providers.zilliqa.currentNetwork}</div>
+					<div>Connected Account (bech32): {this.state.moonlet.providers.zilliqa.currentAccount.address}</div>
+					<div>Connected Account (old): {fromBech32Address(this.state.moonlet.providers.zilliqa.currentAccount.address)}</div>
+					<div>Connected Account pubkey: {this.state.moonlet.providers.zilliqa.currentAccount.address.pubkey}</div>
+					<div>Connected Chain ID: {this.state.moonlet.providers.zilliqa.currentNetwork.chainId}</div>
+					<div>Connected Network name: {this.state.moonlet.providers.zilliqa.currentNetwork.name}</div>
+					<div>Connected Network url: {this.state.moonlet.providers.zilliqa.currentNetwork.url}</div>
+					<div>Connected Network is main net: {this.state.moonlet.providers.zilliqa.currentNetwork.mainNet ? 'yes' : 'no'}</div>
 
 					{/* trigger to force user to select an account, this could be used to implement a switch account feature */}
 					<button onClick={() => {
@@ -120,7 +125,7 @@ export default class Home extends Component {
 					{/* Get balance for current account call */}
 					{/* Note: for now zilliqa.blockchain.getBalance doesn't support bech32 address format, so the dApp should do this transformation, for now */}
 					<button onClick={() => {
-						this.state.zilliqa.blockchain.getBalance(fromBech32Address(this.state.moonlet.providers.zilliqa.currentAccount)).then(this.genericRPCHandler);
+						this.state.zilliqa.blockchain.getBalance(fromBech32Address(this.state.moonlet.providers.zilliqa.currentAccount.adddress)).then(this.genericRPCHandler);
 					}}>Get Current Account Balance</button>
 
 					<br/><br/>
@@ -143,6 +148,12 @@ export default class Home extends Component {
 					<br/><br/>
 					{/* Contract interaction example */}
 					<button onClick={this.deployContract.bind(this)}>Deploy Contract</button>
+
+					<br/><br/>
+					{/* Contract interaction example */}
+					<button onClick={() => this.state.moonlet.providers.zilliqa.signMessage('Aloha!').then(this.genericRPCHandler)}>
+						Sign Message
+					</button>
 				</div>}
 			</div>
 		);
@@ -207,7 +218,7 @@ export default class Home extends Component {
 				// NOTE: all byte strings passed to Scilla contracts _must_ be
 				// prefixed with 0x. Failure to do so will result in the network
 				// rejecting the transaction while consuming gas!
-				value: fromBech32Address(this.state.moonlet.providers.zilliqa.currentAccount)
+				value: fromBech32Address(this.state.moonlet.providers.zilliqa.currentAccount.address)
 			}
 			];
 		
